@@ -1,0 +1,62 @@
+------------------------------------= FEATURES.MOUDULE_DESCRIPTION =-----------------------------------
+	Module dlist (dynamic list), using some functions and macroses,
+simplifies work with dynamic lists.
+It includes new structure, functions for initalisation, macroses for using
+with any type.
+Dlist was developed as tool, what works with any type in C.
+Dlist allocates memory with "malloc" and saves link and list information
+in "dlist" structure. Every time, as it can be overflowed, it relocating (moving and
+clearing place) self to 2 times(max inc, by default - 64) bigger place, and stores data there.
+
+------------------------------------= DEFINITIONS_AND_MACROSES =-----------------------------------
+--------= macroses to work wih dlists
+
+= get(DLIST, AT, TYPE) <=> *(((TYPE*) DLIST.link ) + AT)
+to get data from dlist, where:
+ - DLIST: dlist name
+ - AT: number of element in list
+ - TYPE: type of elements in list
+
+= set(DLIST, AT, TYPE, VALUE) <=> *(((TYPE*) DLIST.link ) + AT) = VALUE
+to set data to dlist, where:
+ - DLIST: dlist name
+ - AT: number of element in list
+ - TYPE: type of elements in list
+ - VALUE: setting value of type of elements
+
+= append(DLIST, TYPE, VALUE) <=> *(( (TYPE*) DLIST.link ) + DLIST.at++) = VALUE
+to add data to end of dlist, where:
+ - DLIST: dlist name
+ - TYPE: type of elements in list
+ - VALUE: setting value of type of elements
+
+
+--------= definitions and constants
+MAXINC 64 // int constant what using as default value of 
+	 // maximal incrementation, when incrementation in 2 times - too much.
+	// to not inc frespace for 256 eleents to add only 1 to 128, only 192
+
+------------------------------------= DLIST STRUCTURE =-----------------------------------
+struct dlist{
+// structure dlist includes variables to work with dynamic list
+	size_t at; // number of last element, what not setted yet (on
+                  // initalisation = 0)
+	size_t size; // number, what describes size of array (before MAXINC*2 
+                    // it's power of 2) after initalisation x^2 >= size (arg
+                   // of init_dlist)
+	size_t type_size; // size of type, what using when allocating
+                         // freespace
+	void *link; // a link, what returns malloc
+};
+
+------------------------------------= FUNCTIONS =-----------------------------------
+= int init_dlist(struct dlist *dlist_link, size_t size, size_t type_size); 
+	initalise dlist of objects of "type_size" with size "size", 
+and stores it to pointer on void in "link";
+
+= int prepare_dlist(struct dlist *dlist_link);
+	if dlist owerfowed, prepaires it to adding new data
+
+int is_dlist_oveflow(struct dlist *dlist_link);
+returns 1 if next element in array will overlow it 
+------------------------------------==-----------------------------------
